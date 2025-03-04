@@ -94,7 +94,7 @@ class Gupta:
         Calculate the potential energy of the system based on the given coordinates.
 
         Args:
-            coords: (np.ndarray).
+            coords: A matrix with shape (n, 3) (np.ndarray).
 
         Returns:
             The calculated potential energy (float).
@@ -119,10 +119,10 @@ class Gupta:
         Compute the gradient of the potential with respect to atomic coordinates.
 
         Args:
-            coords: (np.ndarray).
+            coords: A matrix with shape (n, 3) (np.ndarray).
 
         Returns:
-            The gradient of the potential (np.ndarray).
+            The gradient matrix of the potential with shape (n, 3) (np.ndarray).
         """
         return egrad(self.potential)(coords)
 
@@ -132,9 +132,9 @@ class Gupta:
         Calculate the Hessian matrix of the potential at the given coordinates.
 
         Args:
-        coords: (np.ndarray).
+            coords: A matrix with shape (n, 3) (np.ndarray).
 
         Returns:
-            The Hessian matrix of the potential (np.ndarray).
+            The Hessian matrix of the potential with shape (3n, 3n) (np.ndarray).
         """
         return hess(self.potential)(coords)
