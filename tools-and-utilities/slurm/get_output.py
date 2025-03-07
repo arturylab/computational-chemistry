@@ -17,14 +17,14 @@ import paramiko
 import os
 
 # Retrieve values from environment variables or GitHub Secrets if necessary
-hostname = 'hostname'
-username = 'username'
-password = 'password'  # Or use a private key file for more security
+hostname = os.getenv('SSH_HOST')
+username = os.getenv('SSH_USER')
+password = os.getenv('SSH_PASSWORD')
 
 # Define the directory path where the SLURM files are located
-orca_out_directory = 'path_to_orca_out_files'  # Define your path here
+orca_out_directory = '/LUSTRE/home/erenteria/orca/binaries/freq'  # Define your path here
 
-log_file = 'tools-and-utilities/slurm/get_output_freq.log'  # Define your log file path here
+log_file = 'tools-and-utilities/slurm/get_output.log'  # Define your log file path here
 
 # Establish SSH connection using the private key or password
 client = paramiko.SSHClient()

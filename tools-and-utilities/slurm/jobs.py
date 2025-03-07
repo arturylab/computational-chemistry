@@ -11,12 +11,13 @@ It uses the 'paramiko' library to handle SSH connections and the 'schedule' libr
 import schedule
 import time
 import paramiko
+import os
 
 # Retrieve values from environment variables or GitHub Secrets if necessary
-hostname = 'hostname'
-username = 'username'
-password = 'password'  # Or use a private key file for more security
-log_file = 'tools-and-utilities/slurm/get_output_freq.log'
+hostname = os.getenv('SSH_HOST')
+username = os.getenv('SSH_USER')
+password = os.getenv('SSH_PASSWORD')
+log_file = 'tools-and-utilities/slurm/jobs.log'
 
 def check_jobs():
     """
