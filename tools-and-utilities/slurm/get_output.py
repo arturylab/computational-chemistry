@@ -1,43 +1,25 @@
-'''
-This script connects to a remote server via SSH to retrieve the latest 5 lines from Orca-generated .out files located in a specified directory. It excludes files that begin with 'slurm-' and logs the output into a specified log file.
-Modules:
-    paramiko: A module to handle SSH connections.
-    os: A module to interact with the operating system.
-Environment Variables:
-    hostname: The hostname of the remote server.
-    username: The username for the SSH connection.
-    password: The password for the SSH connection (or use a private key file for more security).
+"""
+This script connects to a remote server via SSH, lists all files in a specified directory,
+filters out files that end with '.out' and do not start with 'slurm-', and fetches the last
+5 lines of each filtered file. The fetched output is then saved into a log file.
 Functions:
-    get_output(): Retrieves the latest 5 lines from the Orca-generated .out files and logs the output into a log file.
-Usage:
-    Ensure that the hostname, username, password, orca_out_directory, and log_file variables are correctly set before running the script. The script will establish an SSH connection to the remote server, list the .out files in the specified directory, fetch the latest 5 lines from each file, and log the results into the specified log file.
-'''
+    get_output(): Connects to the SSH server, lists files in the specified directory,
+                  filters and fetches the last 5 lines of each relevant file, and writes
+                  the output to a log file.
+"""
 
-import paramiko
 import os
-
-# Retrieve values from environment variables or GitHub Secrets if necessary
-hostname = os.getenv('SSH_HOST')
-username = os.getenv('SSH_USER')
-password = os.getenv('SSH_PASSWORD')
+from connection import connect_to_ssh
 
 # Define the directory path where the SLURM files are located
-orca_out_directory = '/LUSTRE/home/erenteria/orca/binaries/freq'  # Define your path here
-
-log_file = 'tools-and-utilities/slurm/get_output.log'  # Define your log file path here
-
-# Establish SSH connection using the private key or password
-client = paramiko.SSHClient()
-client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-client.connect(hostname, username=username, password=password)
+orca_out_directory = '/LUSTRE/home/erenteria/orca/binaries/freq'
+# Define the log file path
+log_file = 'tools-and-utilities/slurm/output.log'
 
 def get_output():
-    """
-    Retrieves the latest 5 lines from the Orca-generated .out files located in the specified directory,
-    excluding files that begin with 'slurm-', and logs the output into a log file.
-    """
-    
+    # Connect to the SSH server
+    client, username = connect_to_ssh()
+
     # List all files in the Orca output directory
     stdin, stdout, stderr = client.exec_command(f'ls {orca_out_directory}')
     files = stdout.read().decode()
@@ -70,6 +52,5 @@ def get_output():
             file.write("\n\n")  # Add separation between files
 
     client.close()
-
 
 get_output()
