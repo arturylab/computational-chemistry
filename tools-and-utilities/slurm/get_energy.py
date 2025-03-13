@@ -1,27 +1,26 @@
 """
-This script connects to a remote server via SSH, lists all files in a specified directory,
-and searches for vibrational frequency information in ORCA output files. It logs the number
-of imaginary frequencies found in each file to a log file.
+This script connects to a remote SSH server, lists all files in a specified directory,
+and searches for the keyword "FINAL SINGLE POINT ENERGY" in each file that ends with .out
+and does not start with 'slurm-'. The results are logged into a specified log file.
 Functions:
-    get_freq(): Connects to the SSH server, lists ORCA output files, searches for vibrational
-                frequency information, and logs the results.
+    get_energy(): Connects to the SSH server, lists files, searches for the keyword in each file,
+                  and logs the results.
 Dependencies:
-    - os: For file path manipulation.
-    - connection: Custom module for establishing SSH connections.
+    - os
+    - connection (a module that provides the connect_to_ssh function)
 Usage:
-    Run the script to connect to the remote server, process the ORCA output files, and log
-    the results to the specified log file.
+    Run the script to connect to the SSH server, process the files, and generate the log file.
 """
 
 import os
 from connection import connect_to_ssh
 
 # Define the directory path where the SLURM files are located
-orca_out_directory = '/LUSTRE/home/erenteria/orca/binaries/freq'
+orca_out_directory = '/LUSTRE/home/erenteria/orca/binaries/freq/completed'
 # Define the log file path
-log_file = 'tools-and-utilities/slurm/freq.log'
+log_file = 'tools-and-utilities/slurm/energy.log'
 
-def get_freq():
+def get_energy():
     # Connect to the SSH server
     client, username = connect_to_ssh()
     
@@ -51,19 +50,20 @@ def get_freq():
                 file.write(f"Error reading file {out_file_path}: {error_message}\n")
                 continue
 
-            # Search for "VIBRATIONAL FREQUENCIES"
-            if "VIBRATIONAL FREQUENCIES" in content:
-                # Count occurrences of "***imaginary mode***"
-                imaginary_count = content.count("***imaginary mode***")
-                
-                # Log the result
-                file.write(f"File: {out_file}\n")
-                file.write(f"Number of imaginary frequencies: {imaginary_count}\n\n")
+            # Search for "FINAL SINGLE POINT ENERGY"
+            if "FINAL SINGLE POINT ENERGY " in content:
+                # Find the line with "FINAL SINGLE POINT ENERGY "
+                lines = content.splitlines()
+                for line in reversed(lines):
+                    if "FINAL SINGLE POINT ENERGY " in line:
+                        file.write(f"File: {out_file}\n")
+                        file.write(f"{line}\n\n")
+                        break
             else:
                 # If the keyword is not found
                 file.write(f"File: {out_file_path}\n")
-                file.write("Keyword 'VIBRATIONAL FREQUENCIES' not found.\n\n")
+                file.write("Keyword 'FINAL SINGLE POINT ENERGY ' not found.\n\n")
 
     client.close()
 
-get_freq()
+get_energy()
