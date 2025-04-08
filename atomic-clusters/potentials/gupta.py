@@ -132,7 +132,7 @@ class Gupta:
         Calculate the Hessian matrix of the potential at the given coordinates.
 
         Args:
-            coords: A matrix with shape (n, 3) (np.ndarray).
+            coords: A matrix with shape (3n, 3n) (np.ndarray).
 
         Returns:
             The Hessian matrix of the potential with shape (3n, 3n) (np.ndarray).
