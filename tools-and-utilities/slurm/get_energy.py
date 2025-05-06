@@ -16,7 +16,7 @@ import os
 from connection import connect_to_ssh
 
 # Define the directory path where the SLURM files are located
-orca_out_directory = '/LUSTRE/home/erenteria/orca/binaries/freq'
+orca_out_directory = '/LUSTRE/home/erenteria/orca/binaries/opt'
 # Define the log file path
 log_file = 'tools-and-utilities/slurm/energy.log'
 
